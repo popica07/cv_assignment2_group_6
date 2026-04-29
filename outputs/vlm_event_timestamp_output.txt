@@ -1,9 +1,0 @@
-1. A man sits on a bench, 00:00 - 00:10
-2. A man does push-ups on the ground, 00:15 - 00:20
-3. A man jumps over a wall, 00:25 - 00:35
-4. A man runs on a grassy field, 00:40 - 00:50
-5. A man jumps over a wooden obstacle, 00:55 - 01:05
-6. A man jumps over a stone wall, 01:10 - 01:20
-7. A man jumps over a brick wall, 01:30 - 01:40
-8. A man jumps over a wooden structure, 01:50 - 02:00
-9. A man jumps over a

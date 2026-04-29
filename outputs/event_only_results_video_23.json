@@ -1,0 +1,13 @@
+{
+  "video_23": {
+    "raw": "1. A person is opening a wooden cabinet door.\n2. The person is holding a piece of paper.\n3. The person is standing in front of a mirror.\n4. The person is walking down a hallway.\n5. The person is walking on a sidewalk.\n6. The person is walking on a brick sidewalk.",
+    "prompt": "Analyze the sampled frames from this video in chronological order.\nRetrieve the salient events of the video.\nDo not describe every frame.\nGroup repeated or similar actions into one event.\nFocus on meaningful actions, scene changes, or important transitions.\nReturn between 6 and 10 salient events.\nThe events must be in chronological order.\n\nUse exactly this format:\nSalient event 1: ...\nSalient event 2: ...\nSalient event 3: ...\n\nDo not include extra explanation.",
+    "attempts": [
+      {
+        "name": "original_prompt",
+        "empty": false,
+        "prompt": "Analyze the sampled frames from this video in chronological order.\nRetrieve the salient events of the video.\nDo not describe every frame.\nGroup repeated or similar actions into one event.\nFocus on meaningful actions, scene changes, or important transitions.\nReturn between 6 and 10 salient events.\nThe events must be in chronological order.\n\nUse exactly this format:\nSalient event 1: ...\nSalient event 2: ...\nSalient event 3: ...\n\nDo not include extra explanation."
+      }
+    ]
+  }
+}

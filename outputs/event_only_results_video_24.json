@@ -1,12 +1,12 @@
 {
   "video_24": {
-    "raw": "1. A person is sitting in the back of a car eating cereal.\n2. The person is still eating cereal while standing up.\n3. The person is now standing on the back of a car.\n4. The person is climbing up a wall.\n5. The person is now standing on a ledge.\n6. The person is running down a set of stairs.\n7. The person is running down a street.\n8. The person is running down a sidewalk.\n9. The person is running down a bridge.\n10. The person is running across a bridge.",
-    "prompt": "Analyze the sampled frames from this video in chronological order.\nRetrieve the salient events of the video.\nDo not describe every frame.\nGroup repeated or similar actions into one event.\nFocus on meaningful actions, scene changes, or important transitions.\nReturn between 6 and 10 salient events.\nThe events must be in chronological order.\n\nUse exactly this format:\nSalient event 1: ...\nSalient event 2: ...\nSalient event 3: ...\n\nDo not include extra explanation.",
+    "raw": "1. A shirtless man runs down a street with cars passing by him.\n2. The same person is now standing at an overpass looking out onto water below.\n3. He then jumps off to land safely beside it.\n4. Another individual joins them as they walk together along the bridge's edge.\n5. They continue walking past more people enjoying their day outdoors near buildings.\n6. Finally, he stops for a moment before continuing his journey across the river.",
+    "prompt": "Analyze the sampled frames from this video in chronological order.\nRetrieve the salient events of the video.\nDo not describe every frame.\nGroup repeated or similar actions into one event.\nFocus on meaningful actions, scene changes, or important transitions.\nReturn between 6 and 10 salient events.\nThe events must be in chronological order.\n\nNumber each event starting from 1, one per line:\n1. <description>\n2. <description>\n3. <description>\nDo not include extra explanation.",
     "attempts": [
       {
         "name": "original_prompt",
         "empty": false,
-        "prompt": "Analyze the sampled frames from this video in chronological order.\nRetrieve the salient events of the video.\nDo not describe every frame.\nGroup repeated or similar actions into one event.\nFocus on meaningful actions, scene changes, or important transitions.\nReturn between 6 and 10 salient events.\nThe events must be in chronological order.\n\nUse exactly this format:\nSalient event 1: ...\nSalient event 2: ...\nSalient event 3: ...\n\nDo not include extra explanation."
+        "prompt": "Analyze the sampled frames from this video in chronological order.\nRetrieve the salient events of the video.\nDo not describe every frame.\nGroup repeated or similar actions into one event.\nFocus on meaningful actions, scene changes, or important transitions.\nReturn between 6 and 10 salient events.\nThe events must be in chronological order.\n\nNumber each event starting from 1, one per line:\n1. <description>\n2. <description>\n3. <description>\nDo not include extra explanation."
       }
     ]
   }

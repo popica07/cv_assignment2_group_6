@@ -1,0 +1,545 @@
+Event Detection VLM Pipeline - Report Writer Overview
+=====================================================
+
+Purpose of this file
+--------------------
+
+This file is a plain-English companion to:
+
+  outputs/event_detection_vlm_section.tex.txt
+
+The LaTeX file is already written like a report section. This overview is
+meant to help the person writing or editing the final report understand what
+was done in Assignment2_Group6.ipynb, which output files matter, how the
+results should be interpreted, and what limitations should be mentioned.
+
+
+1. Overall goal
+---------------
+
+The event-detection part of the notebook investigates whether a
+Vision-Language Model (VLM) can retrieve the salient events in four videos.
+
+The work has three main parts:
+
+1. Generate VLM event predictions.
+2. Parse the VLM outputs into structured data.
+3. Compare the VLM events against manually annotated events using text
+   embedding similarity.
+
+The manual annotations are stored in:
+
+  videos_annotations.txt
+
+The VLM predictions and evaluation outputs are stored in:
+
+  outputs/
+
+
+2. Videos and annotations
+-------------------------
+
+The assignment uses four videos:
+
+  video_21
+  video_22
+  video_23
+  video_24
+
+The manual annotation file contains 38 annotated events across these videos.
+Each annotation has:
+
+  event description, start time-end time, importance label
+
+Example format:
+
+  David Belle performs parkour sequences in an introductory montage, 00:08-02:48, 2
+
+Important detail:
+
+The final number is the annotation importance label. It was parsed and stored,
+but it was not included in the embedding similarity text. This is intentional:
+the VLM predictions do not contain importance labels, so including the label in
+the text comparison would distort the semantic similarity score.
+
+
+3. Model choice
+---------------
+
+The notebook uses SmolVLM2-2.2B-Instruct as the Vision-Language Model.
+
+Why this model was chosen:
+
+- It can process images/frames with text prompts.
+- It is small enough to run locally on Apple Silicon using the MPS backend.
+- It can run in float16, which reduces memory usage.
+- It fits the assignment setting because the task is frame-based visual event
+  description.
+
+Memory-related implementation choices:
+
+- The notebook uses MPS cache cleanup functions to avoid memory buildup.
+- Tile splitting is disabled in the image processor to avoid creating too many
+  image tiles.
+- Long videos are processed in smaller temporal segments.
+- Only a small number of frames are passed into each VLM call.
+
+
+4. Frame sampling
+-----------------
+
+The videos are sampled into frames at regular time intervals. Each sampled
+frame stores:
+
+- frame index
+- timestamp in seconds
+- timestamp formatted as MM:SS
+- image data
+
+The VLM does not receive the full video. It receives sampled frames. This is an
+important limitation: if an event happens between sampled frames, or if the
+meaning requires audio/text/context, the model may miss it.
+
+
+5. Target event ranges
+----------------------
+
+The notebook computes a target number of events based on video duration.
+
+Reason:
+
+Without a target range, the VLM may return too few events for long videos or
+too many redundant events for short videos.
+
+The target range is inserted into the prompts, for example:
+
+  Return between 6 and 10 events.
+
+
+6. Event-only prediction outputs
+--------------------------------
+
+The first prediction setting asks the VLM to produce events only, without
+timestamps.
+
+There are two prompt variants:
+
+  event_only_prompt1
+  event_only_prompt2
+
+event_only_prompt1:
+
+- Baseline salient-event prompt.
+- Asks for chronological salient events.
+- Focuses on meaningful actions, scene changes, and transitions.
+
+event_only_prompt2:
+
+- More action-focused.
+- Emphasizes action verbs such as running, climbing, jumping, talking, eating.
+- Tries to prevent the model from merely describing what is visible.
+
+Raw event-only JSON files:
+
+  outputs/event_only_results_video_21.json
+  outputs/event_only_results_video_21_prompt2.json
+  outputs/event_only_results_video_22.json
+  outputs/event_only_results_video_22_prompt2.json
+  outputs/event_only_results_video_23.json
+  outputs/event_only_results_video_23_prompt2.json
+  outputs/event_only_results_video_24.json
+  outputs/event_only_results_video_24_prompt2.json
+
+Clean text exports:
+
+  outputs/event_only_predictions_prompt1.txt
+  outputs/event_only_predictions_prompt2.txt
+
+These text files are grouped by video and contain only event descriptions,
+because event-only predictions do not have timestamps.
+
+
+7. Timestamped prediction outputs
+---------------------------------
+
+The second prediction setting produces events with approximate timestamps.
+
+There are two timestamped prompt variants:
+
+  timestamp_prompt1
+  timestamp_prompt2
+
+The practical strategy used in the final pipeline:
+
+- Run VLM event detection on temporal segments.
+- Assign approximate timestamps proportionally inside each segment.
+- Export the final result in annotation-like text format.
+
+Why proportional timestamps were used:
+
+Directly asking the VLM to output reliable MM:SS-MM:SS timestamps was
+inconsistent and slow. It sometimes produced malformed timestamps or missed the
+later part of the video. The proportional timestamp approach is deterministic:
+it always produces valid MM:SS intervals and covers the whole segment timeline.
+
+Raw timestamp JSON files:
+
+  outputs/event_timestamp_results_video_21.json
+  outputs/event_timestamp_results_prompt2_events+timestamps_video_21.json
+
+Each of these JSON files contains results for all four videos.
+
+Clean timestamp text exports:
+
+  outputs/timestamp_predictions_prompt1_annotation_style.txt
+  outputs/timestamp_predictions_prompt2_annotation_style.txt
+
+These files use the same style as videos_annotations.txt except they do not
+include the final importance label:
+
+  Event description, 00:00-00:20
+
+
+8. Parsing step
+---------------
+
+Step 7 of the notebook parses the raw VLM outputs.
+
+It creates two main DataFrames:
+
+event_only_df:
+
+- video_name
+- prompt_id
+- event_number
+- event_description
+
+timestamp_df:
+
+- video_name
+- prompt_id
+- event_number
+- event_description
+- start_time
+- end_time
+
+The parser uses regular expressions to handle:
+
+- "Salient event 1: ..."
+- "1. ..."
+- extra spaces
+- MM:SS-MM:SS timestamp intervals
+
+Malformed lines are ignored.
+
+
+9. Evaluation method
+--------------------
+
+Step 8 compares VLM predictions with manual annotations using sentence
+embedding similarity.
+
+Model used for text embeddings:
+
+  SentenceTransformer(all-MiniLM-L6-v2)
+
+Comparison direction:
+
+For each annotated event:
+
+1. Look only at VLM predictions from the same video.
+2. Compute embedding similarity between the annotation description and every
+   VLM event description.
+3. Select the VLM event with the highest similarity.
+4. Mark the annotation as "present" if the best similarity is above the chosen
+   threshold.
+
+Selected threshold:
+
+  0.40
+
+Important interpretation:
+
+This is an annotation-centered recall-style evaluation. It answers:
+
+  "Did the VLM output contain something similar to this annotated event?"
+
+It does not fully measure precision or false positives. In other words, if the
+VLM produces many extra events, those extra events do not directly hurt this
+recall score. They can be discussed qualitatively as over-splitting or
+over-generation.
+
+
+10. Main quantitative results
+-----------------------------
+
+At similarity threshold 0.40:
+
+  event_only_prompt1:  8 / 38 matched, recall 0.211
+  event_only_prompt2:  7 / 38 matched, recall 0.184
+  timestamp_prompt1:  17 / 38 matched, recall 0.447
+  timestamp_prompt2:  19 / 38 matched, recall 0.500
+
+Main conclusion:
+
+Timestamped predictions performed better than event-only predictions. The best
+overall setting was timestamp_prompt2, which matched 19 out of 38 annotated
+events at threshold 0.40.
+
+Useful CSV files:
+
+  outputs/vlm_annotation_embedding_similarity_results.csv
+  outputs/vlm_annotation_embedding_similarity_summary.csv
+  outputs/vlm_annotation_embedding_similarity_per_video_summary.csv
+  outputs/vlm_annotation_embedding_similarity_threshold_sweep.csv
+  outputs/vlm_annotation_embedding_similarity_missed_events.csv
+
+
+11. Threshold sensitivity
+-------------------------
+
+The evaluation includes a threshold sweep from 0.35 to 0.60.
+
+Why this matters:
+
+Embedding similarity can be strict for short event descriptions. Two sentences
+can describe the same event using different words and still receive a moderate
+score, not a very high one.
+
+At threshold 0.35:
+
+  timestamp_prompt1 and timestamp_prompt2 both reach about 55.3% recall.
+
+At threshold 0.40:
+
+  timestamp_prompt2 reaches 50.0% recall.
+
+At threshold 0.50 and above:
+
+  recall drops sharply for all methods.
+
+Report interpretation:
+
+The threshold sweep shows that the ranking of methods is stable: timestamped
+methods generally outperform event-only methods. However, the absolute recall
+depends strongly on the similarity threshold.
+
+
+12. Failure analysis
+--------------------
+
+Step 9 analyzes the events that were missed, meaning the annotated event did
+not have a similar enough VLM prediction at the selected threshold.
+
+Saved failure-analysis files:
+
+  outputs/failure_analysis_missed_events_labeled.csv
+  outputs/failure_analysis_by_category.csv
+  outputs/failure_analysis_overall_categories.csv
+  outputs/prompt_strategy_evaluation_summary.csv
+  outputs/failure_analysis_and_prompt_history.txt
+
+Most common missed-event categories:
+
+  Physical action missed or described differently: 27 missed instances
+  Other / requires manual inspection: 15 missed instances
+  Interview, dialogue, or media-context event: 12 missed instances
+  Long montage or compound event: 12 missed instances
+  Narrative or inferred context: 12 missed instances
+  Title/logo/credits or introductory material: 12 missed instances
+  Scene transition or object interaction: 7 missed instances
+  Social interaction or group context: 4 missed instances
+
+How to explain this:
+
+- Some visual actions were missed because the VLM used different wording or
+  split one annotated event into several smaller events.
+- Long montage annotations are difficult because the annotation may describe a
+  large interval, while the VLM describes short moments.
+- Titles, logos, credits, interviews, and narrative context are harder because
+  they may require reading on-screen text, hearing audio, or understanding the
+  story context.
+
+
+13. Prompt history and lessons learned
+--------------------------------------
+
+The experiments tested multiple prompt strategies.
+
+event_only_prompt1:
+
+- Baseline.
+- Captured some visible actions.
+- Weak on context, interviews, titles, credits, and long montage events.
+- No timestamp information.
+
+event_only_prompt2:
+
+- More action-focused.
+- Produced more explicit action descriptions.
+- Did not improve recall overall.
+- Sometimes over-focused on local visible actions rather than the annotated
+  salient event.
+
+timestamp_prompt1:
+
+- Timestamped event detection using the Step 5-style event detector with
+  assigned time intervals.
+- Performed much better than event-only prompts.
+- Strong for videos 22-24.
+- Still weak on video 21, which is long and contains documentary/interview
+  content.
+
+timestamp_prompt2:
+
+- Alternative timestamp-aware prompt focused on concrete actions and scene
+  transitions.
+- Best overall at threshold 0.40.
+- Strongest setting for video 23.
+- Can over-split long events into many smaller predicted events.
+
+Overall lesson:
+
+Prompting for concrete actions and processing videos in temporal segments gave
+better coverage than asking for one global event list. However, the model still
+struggled with events that are not purely visual.
+
+
+14. Important caveats for the report
+------------------------------------
+
+1. More VLM events than annotated events is expected.
+
+   The VLM often over-splits long annotated events into many smaller events.
+   The evaluation is annotation-centered, so extra VLM events are not counted
+   as false positives in the main recall score.
+
+2. Timestamp quality should be described carefully.
+
+   The final timestamps are approximate. They are not ground-truth temporal
+   boundaries predicted perfectly by the VLM. They are assigned to the detected
+   events based on the segment timeline.
+
+3. Similarity threshold is subjective.
+
+   The chosen threshold 0.40 is reasonable for short event descriptions, but
+   the threshold sweep should be reported to show sensitivity.
+
+4. The manual annotations are more semantic than the VLM outputs.
+
+   Human annotations include concepts such as "Sunday", "no urgency",
+   "reportage", "interview", and "credits". These can be difficult or
+   impossible for a frame-only VLM to infer.
+
+5. The evaluation measures event coverage, not exact temporal localization.
+
+   The main embedding comparison measures whether the event description is
+   semantically present. It does not yet compute temporal IoU between predicted
+   and annotated time intervals.
+
+
+15. How to write the report section
+-----------------------------------
+
+A good report structure would be:
+
+1. State the objective:
+
+   The goal was to detect salient events in four videos using a VLM and compare
+   the predictions with manual annotations.
+
+2. Describe the VLM setup:
+
+   Mention SmolVLM2-2.2B-Instruct, sampled frames, MPS/float16, and memory
+   constraints.
+
+3. Describe the two prediction settings:
+
+   - event-only predictions
+   - event + timestamp predictions
+
+4. Describe prompt variants:
+
+   Compare baseline salient-event prompting with action-focused prompting and
+   timestamp-aware prompting.
+
+5. Explain parsing:
+
+   Raw VLM text was converted into structured event tables using regex.
+
+6. Explain evaluation:
+
+   Manual annotations and VLM predictions were compared using sentence
+   embeddings. Each annotation was matched to its most similar VLM prediction
+   from the same video.
+
+7. Present results:
+
+   Use the summary table from:
+
+     outputs/vlm_annotation_embedding_similarity_summary.csv
+
+   Key result:
+
+     timestamp_prompt2 was best, matching 19/38 annotated events at threshold
+     0.40.
+
+8. Present failure analysis:
+
+   Use:
+
+     outputs/failure_analysis_overall_categories.csv
+     outputs/failure_analysis_and_prompt_history.txt
+
+   Emphasize that missing events were often non-visual, contextual, or long
+   montage-style events.
+
+9. End with limitations:
+
+   Mention sampled-frame limitations, no audio/OCR, approximate timestamps, and
+   threshold sensitivity.
+
+
+16. Suggested short conclusion
+------------------------------
+
+The timestamp-aware VLM pipeline retrieved substantially more annotated events
+than the event-only pipeline. The best configuration, timestamp_prompt2,
+matched 19 of 38 annotated events at a similarity threshold of 0.40. The
+failure analysis shows that the model was strongest on directly visible
+actions and scene changes, but weaker on title cards, credits, interviews,
+narrative context, and long montage annotations. This suggests that sampled
+visual frames alone are useful for detecting concrete actions, but insufficient
+for fully recovering semantically rich human event annotations without
+additional modalities such as audio, OCR, or stronger temporal reasoning.
+
+
+17. Main files to reference
+---------------------------
+
+Formal LaTeX section:
+
+  outputs/event_detection_vlm_section.tex.txt
+
+Clean prediction text files:
+
+  outputs/event_only_predictions_prompt1.txt
+  outputs/event_only_predictions_prompt2.txt
+  outputs/timestamp_predictions_prompt1_annotation_style.txt
+  outputs/timestamp_predictions_prompt2_annotation_style.txt
+
+Main evaluation files:
+
+  outputs/vlm_annotation_embedding_similarity_summary.csv
+  outputs/vlm_annotation_embedding_similarity_per_video_summary.csv
+  outputs/vlm_annotation_embedding_similarity_threshold_sweep.csv
+  outputs/vlm_annotation_embedding_similarity_missed_events.csv
+
+Failure analysis files:
+
+  outputs/failure_analysis_missed_events_labeled.csv
+  outputs/failure_analysis_by_category.csv
+  outputs/failure_analysis_overall_categories.csv
+  outputs/prompt_strategy_evaluation_summary.csv
+  outputs/failure_analysis_and_prompt_history.txt
+

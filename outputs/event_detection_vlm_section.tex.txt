@@ -1,0 +1,488 @@
+% =========================================================================
+%  Computer Vision Assignment 2 — Group 6
+%  Section: Event Detection using Vision-Language Models (VLMs)
+%
+%  Drop the contents of this file into your main .tex (or \input{...} it).
+%  Required packages are listed at the top — copy any that are missing into
+%  the preamble of your master document.
+% =========================================================================
+
+% ----- Preamble snippet (add to your master file if missing) -------------
+% \usepackage{graphicx}
+% \usepackage{booktabs}
+% \usepackage{tabularx}
+% \usepackage{amsmath,amssymb}
+% \usepackage{listings}
+% \usepackage{xcolor}
+% \usepackage{caption}
+% \usepackage{subcaption}
+% \usepackage{hyperref}
+% \usepackage{enumitem}
+% \usepackage{float}
+% \usepackage{array}
+%
+% \lstdefinestyle{prompt}{
+%   basicstyle=\ttfamily\footnotesize,
+%   breaklines=true,
+%   frame=single,
+%   backgroundcolor=\color{gray!8},
+%   columns=fullflexible,
+%   keepspaces=true,
+%   xleftmargin=4pt,xrightmargin=4pt,
+% }
+% -------------------------------------------------------------------------
+
+
+\section{Event Detection using Vision--Language Models (VLMs)}
+\label{sec:vlm-event-detection}
+
+\subsection{Overview and Objective}
+\label{subsec:vlm-overview}
+
+The objective of this section is to detect the salient events present in each
+of the four videos using a small--scale Vision--Language Model (VLM) in two
+configurations: (a)~\textbf{event-only} predictions producing an unordered
+list of detected events, and (b)~\textbf{event~+~timestamp} predictions
+producing an ordered list of events with approximate temporal localisation
+(\texttt{MM:SS--MM:SS}). The VLM outputs are then parsed and matched against
+the human annotations described in Section~\ref{sec:annotation} via
+sentence-embedding similarity. We finally conduct a failure analysis to
+understand which categories of events are systematically missed and we
+document the full history of prompts that we explored.
+
+\subsection{Model Selection}
+\label{subsec:vlm-model}
+
+We selected \textbf{SmolVLM2-2.2B-Instruct}\footnote{\url{https://huggingface.co/blog/smolvlm2}}
+because it (i)~runs natively on Apple Silicon through the \texttt{mps}
+backend; (ii)~accepts a sequence of sampled frames in chat-template format,
+which fits our temporal sampling pipeline; and (iii)~at $\sim$2.2B parameters
+in \texttt{float16} it fits comfortably in $\sim$4.4\,GB of GPU memory,
+roughly four times less than the same model in \texttt{float32}. The model is
+loaded with \texttt{device\_map="auto"} and image tile splitting is disabled
+(\texttt{processor.image\_processor.do\_image\_splitting=False}) to prevent the
+$9\times$ tile explosion that otherwise causes out-of-memory errors on MPS.
+
+\subsection{Frame Sampling}
+\label{subsec:vlm-sampling}
+
+We reuse the uniform temporal sampler from the demo notebook
+(\texttt{sample\_frames\_sparse}). One frame is captured every
+$\Delta t = 2$ seconds, giving $\lfloor T/\Delta t\rfloor + 1$ frames per
+video where $T$ is the video duration in seconds. Each frame is stored as a
+dictionary with its absolute frame index, timestamp in seconds, an
+\texttt{MM:SS} label and the corresponding RGB \texttt{PIL} image.
+Table~\ref{tab:vlm-sampling} summarises the resulting sampling.
+
+\begin{table}[H]
+  \centering
+  \caption{Per-video frame sampling at $\Delta t = 2\,\text{s}$.}
+  \label{tab:vlm-sampling}
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    Video & FPS & Total frames & Duration & Sampled frames \\
+    \midrule
+    video\_21 & 29.97 & 19{,}406 & 10:47 & 324 \\
+    video\_22 & 24.00 &  5{,}661 & 03:55 & 118 \\
+    video\_23 & 29.97 &  5{,}631 & 03:07 &  94 \\
+    video\_24 & 29.97 &  4{,}356 & 02:25 &  73 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/sampled_frames_preview.png}
+  \caption{Six evenly--spaced thumbnails per video, labelled with their
+  \texttt{MM:SS} timestamp, used for visual verification of the sampler.}
+  \label{fig:sampled-frames-preview}
+\end{figure}
+
+\subsection{Target Event Count per Video}
+\label{subsec:vlm-target-count}
+
+VLMs are notoriously verbose: short clips elicit too many redundant
+descriptions and long clips tend to be over-summarised. To keep the model
+honest we tell it explicitly how many events to aim for, scaled by video
+duration as in Table~\ref{tab:vlm-target}.
+
+\begin{table}[H]
+  \centering
+  \caption{Target event range injected into the prompt as a function of
+  video duration.}
+  \label{tab:vlm-target}
+  \small
+  \begin{tabular}{lc}
+    \toprule
+    Duration & Target events (min--max) \\
+    \midrule
+    1--2 minutes  & 4--6   \\
+    3--5 minutes  & 6--10  \\
+    6--10 minutes & 10--15 \\
+    $>$10 minutes & 12--18 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Prompt Engineering and Prompt History}
+\label{subsec:vlm-prompts}
+
+We explored \emph{four} prompting strategies, two for the event-only setting
+and two for the event+timestamp setting. All prompts share the same target
+event range and the same numbered output format
+\texttt{Salient event $N$:~description}.
+
+\paragraph{Prompt~1 (event-only, baseline).}
+The original ``salient event'' formulation from the assignment statement.
+
+\begin{lstlisting}[style=prompt,caption={\texttt{event\_only\_prompt1} -- baseline.},captionpos=b]
+You are a video analyst. The frames below are sampled at regular intervals
+from a video and shown in chronological order.
+Task: list the salient events of the video.
+- Each event must describe a distinct activity or scene.
+- Merge consecutive similar actions into one event.
+- Return between {min_events} and {max_events} events.
+
+Number each event from 1, one per line:
+1. <event description>
+2. <event description>
+Do not add any other text.
+\end{lstlisting}
+
+\paragraph{Prompt~2 (event-only, action-focused).}
+Forces the model towards explicit action verbs and discourages purely
+descriptive captions.
+
+\begin{lstlisting}[style=prompt,caption={\texttt{event\_only\_prompt2} -- action-focused.},captionpos=b]
+You are a video analyst. The frames below are sampled at regular intervals
+from a video and shown in chronological order.
+Task: identify the main ACTIONS and TRANSITIONS that occur throughout the video.
+Rules:
+- Focus on what people are DOING, not just what is visible
+- Each event must describe a distinct activity or location change
+- Merge consecutive similar actions into one event
+- Be specific: use action verbs (running, climbing, jumping, talking, eating...)
+- Return between {min_events} and {max_events} events
+\end{lstlisting}
+
+\paragraph{Prompt~3 (timestamp, Step-5 style + proportional timestamps).}
+The Step~5 event detector is run per temporal segment, then approximate
+\texttt{MM:SS--MM:SS} intervals are assigned proportionally inside each
+segment. This avoids the very unreliable behaviour we observed when the VLM
+itself was asked to emit timestamps.
+
+\paragraph{Prompt~4 (timestamp, alternative scene-transition emphasis).}
+A more concise prompt that asks for short, concrete events covering the
+whole timeline; same proportional timestamp assignment.
+
+\begin{lstlisting}[style=prompt,caption={\texttt{timestamp\_prompt2} -- alternative timestamp-aware prompt.},captionpos=b]
+The frames below are sampled in chronological order from a single video segment.
+List the most salient ACTIONS and SCENE TRANSITIONS that you can observe.
+Rules:
+- Each event must be ONE short sentence (max 12 words).
+- Do not chain multiple actions with commas into one event.
+- Group truly repeated actions into one event only if they happen at the SAME moment.
+- Separate distinct moments / transitions into different events.
+- Return between {min_events} and {max_events} events.
+
+Format strictly as:
+1. short action description
+2. short action description
+\end{lstlisting}
+
+\paragraph{Prompt iterations and lessons learned.}
+We logged every prompt revision while debugging. The most informative ones
+are summarised in Table~\ref{tab:vlm-prompt-history}.
+
+\begin{table}[H]
+  \centering
+  \caption{Prompt iteration history during development.}
+  \label{tab:vlm-prompt-history}
+  \small
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabularx}{\linewidth}{p{2.6cm}Xp{3.6cm}}
+    \toprule
+    \textbf{Iteration} & \textbf{Change introduced} & \textbf{Outcome} \\
+    \midrule
+    Plain ``salient events''
+      & First version, no count constraint, no format constraint.
+      & Long free-text answers, hard to parse, very few alignable events. \\
+    + Numbered format
+      & Added strict ``\texttt{N. description}'' format.
+      & Parser became reliable; output diversity stayed low. \\
+    + Min--Max event count
+      & Tied target range to video duration.
+      & Curbed both over- and under-generation; recall improved. \\
+    Action-verb prompt (P2)
+      & Forced action verbs (running, climbing, eating\dots).
+      & Slightly higher mean similarity, but fewer matched events. \\
+    Single-call timestamps
+      & Asked the model to emit \texttt{MM:SS--MM:SS} itself.
+      & \emph{Failed:} crashed after 16--20\,min with no usable output. \\
+    Two-step timestamps
+      & Two VLM calls (events first, then timestamps).
+      & Still unreliable timestamps; double the runtime. \\
+    Proportional timestamps
+      & Drop VLM timestamps; divide segment time evenly across events.
+      & Always produces valid timestamps; recall jumps from $\sim$20\% to $\sim$50\%. \\
+    Per-segment inference
+      & Split long videos into 2--4 segments, $\le 6$ frames each.
+      & Avoids OOM; covers full timeline; more events detected. \\
+    Stricter ``one short sentence''
+      & Hard cap of 10--12 words, no comma chaining.
+      & Reduces multi-event ``mega-sentences'', sharper parsing. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Output Parser}
+\label{subsec:vlm-parser}
+
+A small regex-based parser converts the raw VLM text into a structured
+\texttt{Event} record:
+
+\begin{lstlisting}[style=prompt,caption={Parser pseudocode.},captionpos=b]
+def parse_events(raw_text):
+    events = []
+    for line in raw_text.splitlines():
+        line = line.strip()
+        if not line: continue
+        # strip "Salient event N:" / "N." / "N)" prefixes
+        line = re.sub(r"^[Ss]al[ei]e?nt\s+[Ee]vent\s+\d+\s*:\s*", "", line)
+        line = re.sub(r"^\d+[\.)\-]\s*", "", line).strip()
+        ts = re.search(r"(\d{1,2}:\d{2})\s*[-]\s*(\d{1,2}:\d{2})", line)
+        events.append({
+            "description": re.sub(r",?\s*\d{1,2}:\d{2}.*$", "", line),
+            "start": ts.group(1) if ts else None,
+            "end":   ts.group(2) if ts else None,
+        })
+    return events
+\end{lstlisting}
+
+\subsection{Word-Embedding Similarity Evaluation}
+\label{subsec:vlm-similarity}
+
+For each annotated event $a_i$ we compute the cosine similarity with every
+predicted event $p_j$ from the same video using a sentence-transformer
+encoder $\phi(\cdot)$:
+\begin{equation}
+  s(a_i,p_j) \;=\; \frac{\phi(a_i)\cdot \phi(p_j)}{\lVert\phi(a_i)\rVert\,\lVert\phi(p_j)\rVert}.
+  \label{eq:cos}
+\end{equation}
+The best match for annotation $a_i$ is $\hat{p}_i = \arg\max_j s(a_i,p_j)$
+with score $s_i^\star = \max_j s(a_i,p_j)$. An annotation is considered
+\emph{retrieved} if $s_i^\star \geq \tau$ for a chosen similarity threshold
+$\tau$. Recall at threshold $\tau$ is therefore
+$\mathrm{Recall}(\tau)=\frac{1}{N}\sum_i \mathbf{1}[s_i^\star\geq\tau]$
+with $N=38$ annotated events across the four videos.
+
+\subsection{Quantitative Results}
+\label{subsec:vlm-quantitative}
+
+Table~\ref{tab:vlm-summary} summarises the four prompt strategies at the
+selected threshold $\tau=0.40$.
+
+\begin{table}[H]
+  \centering
+  \caption{Summary across all four videos at $\tau=0.40$.}
+  \label{tab:vlm-summary}
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    Strategy & \#Pred. & Matched & Recall & Mean sim. \\
+    \midrule
+    \texttt{event\_only\_prompt1}  &  42 &  8 & 0.211 & 0.297 \\
+    \texttt{event\_only\_prompt2}  &  46 &  7 & 0.184 & 0.321 \\
+    \texttt{timestamp\_prompt1}    &  86 & 17 & 0.447 & 0.370 \\
+    \texttt{timestamp\_prompt2}    & 106 & \textbf{19} & \textbf{0.500} & 0.363 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Per-video recall is reported in Table~\ref{tab:vlm-pervideo}: the timestamped
+strategies dominate event-only for every video, with the gap being widest on
+\texttt{video\_22} and \texttt{video\_24}.
+
+\begin{table}[H]
+  \centering
+  \caption{Per-video recall at $\tau=0.40$. Best per row in \textbf{bold}.}
+  \label{tab:vlm-pervideo}
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    & \multicolumn{2}{c}{Event-only} & \multicolumn{2}{c}{Timestamp} \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+    Video & P1 & P2 & P1 & P2 \\
+    \midrule
+    video\_21 & 0.077 & 0.154 & 0.077 & \textbf{0.231} \\
+    video\_22 & 0.375 & 0.000 & \textbf{0.625} & \textbf{0.625} \\
+    video\_23 & 0.111 & 0.111 & 0.444 & \textbf{0.556} \\
+    video\_24 & 0.375 & 0.500 & \textbf{0.875} & 0.750 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Threshold sensitivity.}
+Recall depends strongly on the chosen $\tau$
+(Table~\ref{tab:vlm-threshold}). At $\tau=0.35$ both timestamped strategies
+recover $\sim$55\,\%, while above $\tau=0.45$ all curves collapse, indicating
+that even semantically aligned predictions rarely exceed cosine similarity
+$0.5$ against the human annotations -- a known limitation of sentence
+embeddings on short, action-style sentences.
+
+\begin{table}[H]
+  \centering
+  \caption{Recall as a function of similarity threshold $\tau$.}
+  \label{tab:vlm-threshold}
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    $\tau$ & EO\_P1 & EO\_P2 & TS\_P1 & TS\_P2 \\
+    \midrule
+    0.35 & 0.342 & 0.368 & 0.553 & \textbf{0.553} \\
+    0.40 & 0.211 & 0.184 & 0.447 & \textbf{0.500} \\
+    0.45 & 0.105 & 0.132 & \textbf{0.316} & 0.237 \\
+    0.50 & 0.079 & 0.053 & \textbf{0.132} & 0.079 \\
+    0.55 & 0.000 & 0.026 & \textbf{0.079} & 0.026 \\
+    0.60 & 0.000 & \textbf{0.026} & 0.026 & 0.000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{figures/recall_vs_threshold.png}
+  \caption{Recall as a function of the similarity threshold $\tau$ for
+  the four prompt strategies. Timestamped strategies dominate event-only
+  ones for every reasonable threshold; the curves cross only above
+  $\tau\approx0.5$, where all strategies are essentially failing.}
+  \label{fig:vlm-threshold-curves}
+\end{figure}
+
+\subsection{Failure Analysis}
+\label{subsec:vlm-failure}
+
+Each missed annotation was tagged with one of eight failure categories.
+Table~\ref{tab:vlm-failure-overall} aggregates the totals across all four
+strategies.
+
+\begin{table}[H]
+  \centering
+  \caption{Aggregate failure categories (counts pooled over all strategies).}
+  \label{tab:vlm-failure-overall}
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    Failure category & Missed events & Mean best similarity \\
+    \midrule
+    Physical action missed or described differently & 27 & 0.316 \\
+    Other / requires manual inspection              & 15 & 0.321 \\
+    Interview, dialogue, or media-context event     & 12 & 0.237 \\
+    Long montage or compound event                  & 12 & 0.271 \\
+    Narrative or inferred context                   & 12 & 0.208 \\
+    Title/logo/credits or introductory material     & 12 & 0.170 \\
+    Scene transition or object interaction          &  7 & 0.284 \\
+    Social interaction or group context             &  4 & 0.294 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/failure_categories_bar.png}
+  \caption{Distribution of missed events by failure category, aggregated over
+  the four prompt strategies. Categories that require semantic context beyond
+  pixel-level observation (titles/credits, narrative, interviews) sit at the
+  bottom of the similarity ranking, indicating systematic blind spots of the
+  VLM.}
+  \label{fig:vlm-failure-bar}
+\end{figure}
+
+\paragraph{Interpretation.}
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Pixel-level events} (physical actions, scene transitions,
+        object interactions) are missed mostly because of paraphrase
+        differences: similarity scores are non-trivially high
+        (mean $\approx 0.28$--$0.32$) but never quite reach the threshold.
+        These are recoverable with a softer threshold or a stronger
+        embedding model.
+  \item \textbf{Non-visual events} (titles, credits, interviews, narrative
+        context) sit at very low similarity (mean $\leq 0.24$) -- the VLM
+        simply cannot recover information that is not directly observable in
+        the sampled frames.
+  \item \textbf{Long montage / compound annotations} are inherently
+        mismatched: a single annotation describes 30--60\,s of video that
+        the VLM legitimately splits into several short events, none of which
+        is individually similar enough to the umbrella annotation.
+\end{itemize}
+
+\subsection{Qualitative Examples}
+\label{subsec:vlm-qualitative}
+
+\paragraph{video\_24 -- best case (\texttt{timestamp\_prompt1}, recall $=$ 0.875).}
+\begin{lstlisting}[style=prompt]
+1. A man is sitting inside his car with food on top of it..., 00:00-00:07
+2. Eating food that has been placed onto the roof rack...,   00:15-00:23
+3. A shirtless man jumps over an obstacle on his skateboard, 00:48-00:53
+4. He lands back onto solid ground after completing his trick, 01:05-01:11
+5. A man jumps over a fence on top of his skateboard,        01:36-01:42
+\end{lstlisting}
+
+\paragraph{video\_21 -- worst case (long, multi-scene documentary).}
+The 10:47 video mixes parkour shots, interviews, archival footage and
+on-screen text. Even the best strategy (\texttt{timestamp\_prompt2}) recovers
+only 3 out of 13 annotations -- mostly the visible parkour actions. Title
+cards, voice-over narration and interview cuts are all missed.
+
+\subsection{Discussion}
+\label{subsec:vlm-discussion}
+
+Three observations are worth highlighting:
+
+\begin{enumerate}[leftmargin=1.4em]
+  \item \textbf{Timestamped predictions strictly dominate event-only ones.}
+        Splitting the video into temporal segments forces the VLM to
+        attend to the late portion of the clip, which the single-shot
+        event-only strategy systematically ignores. This roughly
+        \emph{doubles} recall at every threshold up to $\tau=0.45$.
+  \item \textbf{Asking the VLM for timestamps directly is unreliable.}
+        Across $>$30 attempts SmolVLM2 produced inconsistent or
+        ill-formatted \texttt{MM:SS} output, sometimes after 16--20\,min
+        of generation. Replacing this by a deterministic proportional
+        assignment within each temporal segment is both faster and more
+        accurate.
+  \item \textbf{The 50\,\% recall ceiling is partly an evaluation artefact.}
+        Sentence-embedding similarity penalises legitimate paraphrases. The
+        threshold sweep (Table~\ref{tab:vlm-threshold}) shows that lowering
+        $\tau$ to $0.35$ recovers an extra $\sim$5\,\% absolute recall
+        without obviously polluting the matches.
+\end{enumerate}
+
+\subsection{Conclusion}
+\label{subsec:vlm-conclusion}
+
+The best configuration is the timestamped, scene-transition--oriented prompt
+(\texttt{timestamp\_prompt2}) running on per-segment inference with
+deterministic proportional timestamps. It retrieves \textbf{19/38 = 50\,\%}
+of the annotated events at threshold $\tau=0.40$ and \textbf{55.3\,\%} at
+$\tau=0.35$. The remaining failures are dominated by content that is not
+directly observable in sampled frames -- titles, credits, interviews and
+narrative context -- which would require either a richer modality (audio,
+on-screen text OCR) or a larger VLM with stronger temporal reasoning.
+
+% --- (Optional) Auxiliary files reference ---------------------------------
+% Raw VLM outputs and CSV evaluation tables are stored in:
+%   outputs/event_only_predictions_prompt1.txt
+%   outputs/event_only_predictions_prompt2.txt
+%   outputs/timestamp_predictions_prompt1_annotation_style.txt
+%   outputs/timestamp_predictions_prompt2_annotation_style.txt
+%   outputs/vlm_annotation_embedding_similarity_summary.csv
+%   outputs/vlm_annotation_embedding_similarity_per_video_summary.csv
+%   outputs/vlm_annotation_embedding_similarity_threshold_sweep.csv
+%   outputs/failure_analysis_overall_categories.csv
+%   outputs/failure_analysis_by_category.csv
+%   outputs/failure_analysis_missed_events_labeled.csv
+%   outputs/prompt_strategy_evaluation_summary.csv
+%   outputs/failure_analysis_and_prompt_history.txt
+% --------------------------------------------------------------------------

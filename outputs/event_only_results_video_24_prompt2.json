@@ -1,0 +1,13 @@
+{
+  "video_24": {
+    "raw": "1. A shirtless man runs down stairs towards water with his backpack\n  2. He jumps over railing onto bridge overlooking river \n  3. Another person walks across street near sidewalk next to building\n\n4. Two men walk along side of road by lake while others pass them by car\n  5. One woman sits inside vehicle parked beside curb as another drives away\n   6. Man eats cereal bowl out of hand outside parking lot area where cars park for day trips \n\n7. Woman wearing red pants stands up after sitting indoors looking through window before leaving home \n   8. Person climbs fence around poolside during daytime outdoor activities \n   9. Group gathers together outdoors enjoying time spent socializing under trees above ground level \n  10. People stand close together conversing amongst themselves standing behind metal barrier separating two areas",
+    "prompt": "You are a video analyst. The frames below are sampled at regular intervals from a video and shown in chronological order.\nTask: identify the main ACTIONS and TRANSITIONS that occur throughout the video.\nRules:\n- Focus on what people are DOING, not just what is visible\n- Each event must describe a distinct activity or location change\n- Merge consecutive similar actions into one event\n- Be specific: use action verbs (running, climbing, jumping, talking, eating...)\n- Return between 6 and 10 events\n\nNumber each event from 1, one per line:\n1. <action description>\n2. <action description>\n3. <action description>\nDo not add any other text.",
+    "attempts": [
+      {
+        "name": "original_prompt",
+        "empty": false,
+        "prompt": "You are a video analyst. The frames below are sampled at regular intervals from a video and shown in chronological order.\nTask: identify the main ACTIONS and TRANSITIONS that occur throughout the video.\nRules:\n- Focus on what people are DOING, not just what is visible\n- Each event must describe a distinct activity or location change\n- Merge consecutive similar actions into one event\n- Be specific: use action verbs (running, climbing, jumping, talking, eating...)\n- Return between 6 and 10 events\n\nNumber each event from 1, one per line:\n1. <action description>\n2. <action description>\n3. <action description>\nDo not add any other text."
+      }
+    ]
+  }
+}

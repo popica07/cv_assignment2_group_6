@@ -1,0 +1,13 @@
+{
+  "video_23": {
+    "raw": "1. A man walks down an outdoor staircase with his backpack on. \n2. He stops to look up as he reaches the top of the stairs. \n3. Another person climbs over him while carrying their own bag. \n4. They continue walking together towards another building entrance. \n5. Inside this new place they enter through glass doors. \n6. People inside greet them warmly upon arrival. \n7. After some time spent conversing among themselves, two individuals exit the room. \n8. One carries a large suitcase across the lobby area before leaving. \n9. Finally, someone sits comfortably by the window overlooking the cityscape outside.",
+    "prompt": "You are a video analyst. The frames below are sampled at regular intervals from a video and shown in chronological order.\nTask: identify the main ACTIONS and TRANSITIONS that occur throughout the video.\nRules:\n- Focus on what people are DOING, not just what is visible\n- Each event must describe a distinct activity or location change\n- Merge consecutive similar actions into one event\n- Be specific: use action verbs (running, climbing, jumping, talking, eating...)\n- Return between 6 and 10 events\n\nNumber each event from 1, one per line:\n1. <action description>\n2. <action description>\n3. <action description>\nDo not add any other text.",
+    "attempts": [
+      {
+        "name": "original_prompt",
+        "empty": false,
+        "prompt": "You are a video analyst. The frames below are sampled at regular intervals from a video and shown in chronological order.\nTask: identify the main ACTIONS and TRANSITIONS that occur throughout the video.\nRules:\n- Focus on what people are DOING, not just what is visible\n- Each event must describe a distinct activity or location change\n- Merge consecutive similar actions into one event\n- Be specific: use action verbs (running, climbing, jumping, talking, eating...)\n- Return between 6 and 10 events\n\nNumber each event from 1, one per line:\n1. <action description>\n2. <action description>\n3. <action description>\nDo not add any other text."
+      }
+    ]
+  }
+}

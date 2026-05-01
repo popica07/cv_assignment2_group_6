@@ -1,0 +1,13 @@
+{
+  "video_22": {
+    "raw": "1. A man runs across an open field towards another group of men playing frisbee.\n2. Two young women walk down a sidewalk near some trees while conversing with friends.\n3. Three boys play basketball together under a large tree during recess time.\n4. One boy climbs up onto a brick ledge to get closer to his peers who have gathered around him for conversation.\n5. Another person walks along a path lined by bushes as they pass through campus grounds where students gather outdoors.\n6. Students sit outside their dorms watching TV before heading out to enjoy the day's activities.",
+    "prompt": "You are a video analyst. The frames below are sampled at regular intervals from a video and shown in chronological order.\nTask: identify the main ACTIONS and TRANSITIONS that occur throughout the video.\nRules:\n- Focus on what people are DOING, not just what is visible\n- Each event must describe a distinct activity or location change\n- Merge consecutive similar actions into one event\n- Be specific: use action verbs (running, climbing, jumping, talking, eating...)\n- Return between 6 and 10 events\n\nNumber each event from 1, one per line:\n1. <action description>\n2. <action description>\n3. <action description>\nDo not add any other text.",
+    "attempts": [
+      {
+        "name": "original_prompt",
+        "empty": false,
+        "prompt": "You are a video analyst. The frames below are sampled at regular intervals from a video and shown in chronological order.\nTask: identify the main ACTIONS and TRANSITIONS that occur throughout the video.\nRules:\n- Focus on what people are DOING, not just what is visible\n- Each event must describe a distinct activity or location change\n- Merge consecutive similar actions into one event\n- Be specific: use action verbs (running, climbing, jumping, talking, eating...)\n- Return between 6 and 10 events\n\nNumber each event from 1, one per line:\n1. <action description>\n2. <action description>\n3. <action description>\nDo not add any other text."
+      }
+    ]
+  }
+}

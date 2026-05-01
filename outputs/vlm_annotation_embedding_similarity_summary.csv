@@ -1,0 +1,5 @@
+prediction_set,prediction_type,prompt_id,annotated_events,matched_events,recall_at_threshold,mean_best_similarity,median_best_similarity
+event_only_prompt1,event_only,prompt1,38,8,0.21052631578947367,0.29737248879514244,0.29517853260040283
+event_only_prompt2,event_only,prompt2,38,7,0.18421052631578946,0.3207393821917082,0.31656506657600403
+timestamp_prompt1,timestamp,prompt1,38,17,0.4473684210526316,0.36977420825707286,0.3791093975305557
+timestamp_prompt2,timestamp,prompt2,38,19,0.5,0.36262256436442075,0.390815794467926

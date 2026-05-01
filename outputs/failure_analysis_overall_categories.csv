@@ -1,0 +1,9 @@
+failure_category,missed_events,mean_best_similarity
+Physical action missed or described differently,27,0.31597808224183543
+Other / requires manual inspection,15,0.3213648358980814
+"Interview, dialogue, or media-context event",12,0.2371602995942036
+Long montage or compound event,12,0.2705534075697263
+Narrative or inferred context,12,0.20770381142695746
+Title/logo/credits or introductory material,12,0.1698411560306946
+Scene transition or object interaction,7,0.28440272169453756
+Social interaction or group context,4,0.29420066252350807

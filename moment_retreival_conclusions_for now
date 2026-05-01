@@ -1,0 +1,52 @@
+Results Overview
+IoU Scores (the core metric)
+Video	Moment-DETR	CG-DETR	Winner
+video_21	0.3166	0.3388	CG-DETR +2.2pp
+video_22	0.2571	0.4164	CG-DETR +15.9pp
+video_23	0.1463	0.1648	CG-DETR +1.8pp
+video_24	0.2529	0.1937	Moment-DETR +5.9pp
+Overall	0.243	0.278	CG-DETR wins
+→ CG-DETR is the better model overall, so the summary used it (correctly selected automatically).
+
+What the Results Actually Mean
+The Confidence Scores (~0.99) Are Misleading
+Every single prediction has a score of 0.96–0.9997. This is expected and normal — Moment-DETR and CG-DETR were trained on QVHighlights, and their sigmoid outputs are not well-calibrated for out-of-distribution videos like yours. A score of 0.99 does NOT mean "the model is 99% sure". It just means the model committed to a region. The IoU against annotations is the real quality indicator.
+
+Video-by-Video Breakdown
+Video_21 — Biggest Problem
+This is the hardest video (10 min, 24 VLM events). The VLM hallucinated the content — it described events like "A group gathers around inside someone's house for dinner time" and "Two people standing outside their homes during dusk". The real video is a David Belle parkour documentary. These hallucinated descriptions then misguided the moment retrieval models.
+
+Despite this, some events accidentally hit good IoU:
+
+GT "movie clip with tricks" (6:23–6:47) → IoU 0.91 (Moment-DETR) — got lucky, region was covered
+GT "TV channel interview" (5:24–5:43) → IoU 0.84 (Moment-DETR)
+But the first 3 minutes are completely missed by CG-DETR (all 24 CG-DETR predictions land between 3:37–10:47).
+
+Video_22 — Best Performance
+CG-DETR 0.4164 is the best single-video score. Two near-perfect hits:
+
+"Participant speaks and demonstrates jump" (2:41–3:05) → IoU 0.9538
+"Coordinated jumps on wall" (3:05–3:40) → IoU 0.9086
+Main miss: the 2-minute interview segment (0:21–2:30) gets IoU 0.0 from both models. The VLM only detected 6 events and didn't cover this long continuous region.
+
+Video_23 — Worst Performance (both models ~0.15)
+This is a structured narrative video (man's morning commute, ends with parkour). The first 59 seconds contain 4 key events — all 6 VLM-detected events land in the 57–187s range, so the model never even queries for the early events. Root cause: the VLM described escalators, staircases and parking lots — things that appear late in the video — and completely ignored the waking-up/getting-dressed scene.
+
+Video_24 — Mixed
+Short compilation video. Moment-DETR does better here (0.2529). A great hit:
+
+"Additional parkour sequences" (1:54–2:19) → IoU 0.859
+But 3 events get zero IoU from CG-DETR because the VLM descriptions all pointed to the 42–145s range, leaving the 9–96s region poorly covered.
+
+Three Core Failure Modes (Good for the Report)
+Failure	Video	Why
+VLM hallucination	video_21	SmolVLM2 described a completely wrong scene — dinner parties instead of parkour
+Temporal blindspot	video_23	VLM missed the first 59 seconds entirely; all 6 queries point to the second half
+Coverage gap	video_22	Long interview (2 min) was compressed into 0 detected events by the VLM
+Summary Video Quality
+The summary for video_23 is the worst affected — it selected 5 clips all from 144–186s (the last 40 seconds of a 3-minute video), missing the entire parkour run in the middle. This is directly traceable to the VLM failure on that video.
+
+The summary for video_22 is the most sensible — it covers the parkour demonstrations from 0s to 230s in chronological order, which aligns well with what a human would pick.
+
+Bottom Line
+The pipeline works end-to-end and the IoU numbers (~0.24–0.28) are reasonable for a zero-shot pipeline with no fine-tuning. The biggest bottleneck is not the moment retrieval models — it is the VLM at Step 3. Garbage-in, garbage-out: if the VLM describes the wrong events or places them in the wrong temporal region, even a perfect moment retrieval model can't recover.

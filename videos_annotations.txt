@@ -1,48 +1,49 @@
-Video 21 
-00:00–00:08 Video title and introduction to the reportage about David Belle 0
-00:08–02:48 David Belle performs parkour sequences in an introductory montage 2
-02:49–03:20 David Belle climbs and performs parkour on a structure 1
-03:40–04:00 A parkour group is introduced and presented 1
-04:27–04:38 The group interacts with fans, signing posters and appearing in media 1
-05:24–05:43 The group is interviewed on a TV channel 1
-06:23–06:47 A clip from the movie "Mana o te Toa" shows a person performing tricks 0
-06:57–07:23 David Belle visits a house 1
-07:23–07:28 David Belle’s mother is briefly interviewed 0
-07:47–07:55 David Belle shows images of an athlete he admires 1
-09:03–09:17 A person attempts a trick, fails initially, then succeeds on retry -1
-10:17–10:38 David Belle performs parkour down a building 2
-10:38–10:47 A group greets David Belle and shakes his hand -1
+Video 21
+
+Video title and introduction to the reportage about David Belle, 00:00–00:08, 0
+David Belle performs parkour sequences in an introductory montage, 00:08–02:48, 2
+David Belle climbs and performs parkour on a structure, 02:49–03:20, 1
+A parkour group is introduced and presented, 03:40–04:00, 1
+The group interacts with fans, signing posters and appearing in media, 04:27–04:38, 1
+The group is interviewed on a TV channel, 05:24–05:43, 1
+A clip from the movie "Mana o te Toa" shows a person performing tricks, 06:23–06:47, 0
+David Belle visits a house, 06:57–07:23, 1
+David Belle's mother is briefly interviewed, 07:23–07:28, 0
+David Belle shows images of an athlete he admires, 07:47–07:55, 1
+A person attempts a trick, fails initially, then succeeds on retry, 09:03–09:17, -1
+David Belle performs parkour down a building, 10:17–10:38, 2
+A group greets David Belle and shakes his hand, 10:38–10:47, -1
 
 Video 22
 
-00:00–00:17 A group of people warm up and exercise together 0
-00:18–00:20 A logo appears introducing "Charlotte Parkour" 2
-00:21–02:30 A member of Charlotte Parkour is interviewed, with interleaved parkour demonstrations 2
-01:31–02:10 A group continues training together in an outdoor field 0
-02:31–02:39 A participant attempts a rolling movement during training 1
-02:41–03:05 Another participant speaks and demonstrates a jump over an obstacle 1
-03:05–03:40 A group practices coordinated jumps onto a wall, attempting precision landings 1
-03:44–03:50 The group lines up on a wall facing the camera -1
+A group of people warm up and exercise together, 00:00–00:17, 0
+A logo appears introducing "Charlotte Parkour", 00:18–00:20, 2
+A member of Charlotte Parkour is interviewed, with interleaved parkour demonstrations, 00:21–02:30, 2
+A group continues training together in an outdoor field, 01:31–02:10, 0
+A participant attempts a rolling movement during training, 02:31–02:39, 1
+Another participant speaks and demonstrates a jump over an obstacle, 02:41–03:05, 1
+A group practices coordinated jumps onto a wall, attempting precision landings, 03:05–03:40, 1
+The group lines up on a wall facing the camera, 03:44–03:50, -1
 
-Video 23 
+Video 23
 
-00:00–00:10 A man wakes up and checks the time 2
-00:10–00:28 He quickly gets dressed and prepares to leave 1
-00:29–00:41 He exits the building using an elevator 0
-00:41–00:59 He attempts to catch public transport (bus and train) but fails 1
-00:59–02:12 He runs and performs parkour over obstacles to continue his journey 2
-02:13–02:24 He slows down and adjusts his appearance calmly -1
-02:25–02:34 He arrives at an empty location 1
-02:34–02:46 He realizes it is Sunday and there is no urgency 2
-02:46–03:07 Ending credits appear -2
+A man wakes up and checks the time, 00:00–00:10, 2
+He quickly gets dressed and prepares to leave, 00:10–00:28, 1
+He exits the building using an elevator, 00:29–00:41, 0
+He attempts to catch public transport (bus and train) but fails, 00:41–00:59, 1
+He runs and performs parkour over obstacles to continue his journey, 00:59–02:12, 2
+He slows down and adjusts his appearance calmly, 02:13–02:24, -1
+He arrives at an empty location, 02:25–02:34, 1
+He realizes it is Sunday and there is no urgency, 02:34–02:46, 2
+Ending credits appear, 02:46–03:07, -2
 
 Video 24
 
-00:09–00:14 A group of people socialize in a park -1
-00:28–00:32 People are shown inside a car -1
-00:41–00:56 A boy performs a sequence of parkour moves, including jumps, slides, and a flip 2
-01:07–01:09 A group dances briefly -1
-01:19–01:36 Multiple individuals perform parkour jumps across different locations and camera shots 2
-01:38–01:46 A shopping cart is pushed into a lake and others attempt to retrieve it -1
-01:54–02:19 Additional parkour sequences are performed across multiple scenes 1
-02:19–02:25 A person carefully walks along a narrow wall beside a river 1
+A group of people socialize in a park, 00:09–00:14, -1
+People are shown inside a car, 00:28–00:32, -1
+A boy performs a sequence of parkour moves, including jumps, slides, and a flip, 00:41–00:56, 2
+A group dances briefly, 01:07–01:09, -1
+Multiple individuals perform parkour jumps across different locations and camera shots, 01:19–01:36, 2
+A shopping cart is pushed into a lake and others attempt to retrieve it, 01:38–01:46, -1
+Additional parkour sequences are performed across multiple scenes, 01:54–02:19, 1
+A person carefully walks along a narrow wall beside a river, 02:19–02:25, 1

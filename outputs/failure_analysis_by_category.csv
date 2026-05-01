@@ -1,0 +1,33 @@
+prediction_set,prediction_type,prompt_id,failure_category,missed_events,mean_best_similarity,median_best_similarity
+event_only_prompt1,event_only,prompt1,Physical action missed or described differently,8,0.3398041557520628,0.3494962453842163
+event_only_prompt1,event_only,prompt1,Other / requires manual inspection,5,0.2869390428066253,0.2952939867973327
+event_only_prompt1,event_only,prompt1,Long montage or compound event,4,0.24696653708815572,0.24127368628978724
+event_only_prompt1,event_only,prompt1,"Interview, dialogue, or media-context event",3,0.226049597064654,0.2475124299526214
+event_only_prompt1,event_only,prompt1,Narrative or inferred context,3,0.16283609469731647,0.1652390658855438
+event_only_prompt1,event_only,prompt1,Scene transition or object interaction,3,0.22674685219923654,0.2054392546415329
+event_only_prompt1,event_only,prompt1,Title/logo/credits or introductory material,3,0.1083957230051358,0.1054239720106124
+event_only_prompt1,event_only,prompt1,Social interaction or group context,1,0.2322819679975509,0.2322819679975509
+event_only_prompt2,event_only,prompt2,Physical action missed or described differently,8,0.30294070951640606,0.3002263009548187
+event_only_prompt2,event_only,prompt2,Other / requires manual inspection,6,0.33255463838577265,0.3343042433261871
+event_only_prompt2,event_only,prompt2,"Interview, dialogue, or media-context event",4,0.26863384246826166,0.2696796059608459
+event_only_prompt2,event_only,prompt2,Long montage or compound event,4,0.27307902649044985,0.2584627717733383
+event_only_prompt2,event_only,prompt2,Narrative or inferred context,3,0.2065030187368393,0.2044698745012283
+event_only_prompt2,event_only,prompt2,Title/logo/credits or introductory material,3,0.19569544494152066,0.2209827601909637
+event_only_prompt2,event_only,prompt2,Scene transition or object interaction,2,0.3423541635274887,0.3423541635274887
+event_only_prompt2,event_only,prompt2,Social interaction or group context,1,0.3081187307834625,0.3081187307834625
+timestamp_prompt1,timestamp,prompt1,Physical action missed or described differently,6,0.31774583458900446,0.2985053956508636
+timestamp_prompt1,timestamp,prompt1,"Interview, dialogue, or media-context event",3,0.24234028657277418,0.2217023372650146
+timestamp_prompt1,timestamp,prompt1,Narrative or inferred context,3,0.23135885596275327,0.2545375823974609
+timestamp_prompt1,timestamp,prompt1,Title/logo/credits or introductory material,3,0.20241053899129227,0.2102538794279098
+timestamp_prompt1,timestamp,prompt1,Long montage or compound event,2,0.2950821667909622,0.2950821667909622
+timestamp_prompt1,timestamp,prompt1,Other / requires manual inspection,2,0.3284380137920379,0.3284380137920379
+timestamp_prompt1,timestamp,prompt1,Scene transition or object interaction,1,0.2993245422840118,0.2993245422840118
+timestamp_prompt1,timestamp,prompt1,Social interaction or group context,1,0.3286435604095459,0.3286435604095459
+timestamp_prompt2,timestamp,prompt2,Physical action missed or described differently,5,0.29659485816955566,0.3079729080200195
+timestamp_prompt2,timestamp,prompt2,Narrative or inferred context,3,0.23011727631092072,0.2002134770154953
+timestamp_prompt2,timestamp,prompt2,Title/logo/credits or introductory material,3,0.1728629171848297,0.1400022655725479
+timestamp_prompt2,timestamp,prompt2,"Interview, dialogue, or media-context event",2,0.1831092871725559,0.1831092871725559
+timestamp_prompt2,timestamp,prompt2,Long montage or compound event,2,0.2881471514701843,0.2881471514701843
+timestamp_prompt2,timestamp,prompt2,Other / requires manual inspection,2,0.36678673326969147,0.36678673326969147
+timestamp_prompt2,timestamp,prompt2,Scene transition or object interaction,1,0.3265456259250641,0.3265456259250641
+timestamp_prompt2,timestamp,prompt2,Social interaction or group context,1,0.3077583909034729,0.3077583909034729

@@ -1,0 +1,42 @@
+Failure Analysis and Prompt Strategy Review
+==================================================
+
+Embedding comparison setup
+- Each annotated event is matched to the most similar VLM event from the same video.
+- The annotation importance label is stored but not used in the embedding text.
+- Missed events are annotations whose best similarity is below the selected threshold.
+
+Prompt performance at selected threshold
+- timestamp_prompt2: 19/38 matched (50.0% recall), mean similarity 0.363.
+  Success: Best overall recall at the selected threshold and strongest prompt for video 23.
+  Failure: May over-split long events and still misses titles, credits, interviews, and inferred story context.
+- timestamp_prompt1: 17/38 matched (44.7% recall), mean similarity 0.370.
+  Success: Substantially better annotation coverage than event-only outputs, especially for videos 22-24.
+  Failure: Still struggled with video 21 and with abstract/narrative annotations not directly visible in sampled frames.
+- event_only_prompt1: 8/38 matched (21.1% recall), mean similarity 0.297.
+  Success: Useful baseline; captured some visible actions and scene changes.
+  Failure: Missed many contextual, interview, title/credit, and long montage annotations; no temporal information.
+- event_only_prompt2: 7/38 matched (18.4% recall), mean similarity 0.321.
+  Success: More explicit action wording in several predictions.
+  Failure: Still weak on annotated narrative/context events and sometimes over-focused on low-level visible movement.
+
+Most common missed-event types
+- Physical action missed or described differently: 27 missed instances (mean best similarity 0.316).
+- Other / requires manual inspection: 15 missed instances (mean best similarity 0.321).
+- Interview, dialogue, or media-context event: 12 missed instances (mean best similarity 0.237).
+- Long montage or compound event: 12 missed instances (mean best similarity 0.271).
+- Narrative or inferred context: 12 missed instances (mean best similarity 0.208).
+- Title/logo/credits or introductory material: 12 missed instances (mean best similarity 0.170).
+- Scene transition or object interaction: 7 missed instances (mean best similarity 0.284).
+- Social interaction or group context: 4 missed instances (mean best similarity 0.294).
+
+Threshold sensitivity
+- Threshold 0.35: event_only_prompt1=34.2%, event_only_prompt2=36.8%, timestamp_prompt1=55.3%, timestamp_prompt2=55.3%
+- Threshold 0.40: event_only_prompt1=21.1%, event_only_prompt2=18.4%, timestamp_prompt1=44.7%, timestamp_prompt2=50.0%
+- Threshold 0.45: event_only_prompt1=10.5%, event_only_prompt2=13.2%, timestamp_prompt1=31.6%, timestamp_prompt2=23.7%
+- Threshold 0.50: event_only_prompt1=7.9%, event_only_prompt2=5.3%, timestamp_prompt1=13.2%, timestamp_prompt2=7.9%
+- Threshold 0.55: event_only_prompt1=0.0%, event_only_prompt2=2.6%, timestamp_prompt1=7.9%, timestamp_prompt2=2.6%
+- Threshold 0.60: event_only_prompt1=0.0%, event_only_prompt2=2.6%, timestamp_prompt1=2.6%, timestamp_prompt2=0.0%
+
+Interpretation
+Timestamped predictions retrieved more annotated events than event-only predictions. The main remaining failures are events that require semantic context beyond sampled frames, such as titles, logos, credits, interviews, inferred story meaning, and long montage-style annotations.

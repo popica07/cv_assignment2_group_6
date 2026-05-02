@@ -1,0 +1,7 @@
+{
+  "clip_baseline": {
+    "moment_detr": {},
+    "cg_detr": {}
+  },
+  "clip_slowfast": {}
+}

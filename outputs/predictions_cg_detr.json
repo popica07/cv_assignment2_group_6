@@ -1,0 +1,304 @@
+{
+  "video_21": [
+    {
+      "event_id": 1,
+      "event": "A man is running down a street with buildings behind him.",
+      "start_s": 520.18,
+      "end_s": 555.28,
+      "score": 0.9989
+    },
+    {
+      "event_id": 2,
+      "event": "The same person runs up to another building's entrance.",
+      "start_s": 305.89,
+      "end_s": 325.36,
+      "score": 0.9989
+    },
+    {
+      "event_id": 3,
+      "event": "He jumps over an obstacle while still near that building.",
+      "start_s": 607.08,
+      "end_s": 636.64,
+      "score": 0.9983
+    },
+    {
+      "event_id": 4,
+      "event": "Another individual stands next to parked cars at night.",
+      "start_s": 635.79,
+      "end_s": 647.51,
+      "score": 0.9993
+    },
+    {
+      "event_id": 5,
+      "event": "An aerial view shows multiple residential structures surrounded by greenery.",
+      "start_s": 377.65,
+      "end_s": 410.6,
+      "score": 0.9992
+    },
+    {
+      "event_id": 6,
+      "event": "Two people are standing together outside their homes during dusk.",
+      "start_s": 278.7,
+      "end_s": 307.26,
+      "score": 0.9994
+    },
+    {
+      "event_id": 7,
+      "event": "One woman walks along a sidewalk lined with trees before entering her home.",
+      "start_s": 609.32,
+      "end_s": 622.3,
+      "score": 0.9993
+    },
+    {
+      "event_id": 8,
+      "event": "A group gathers around inside someone\u2019s house for what appears to be dinner time.",
+      "start_s": 417.45,
+      "end_s": 455.3,
+      "score": 0.9994
+    },
+    {
+      "event_id": 9,
+      "event": "People sit indoors enjoying food as evening falls.",
+      "start_s": 471.26,
+      "end_s": 484.37,
+      "score": 0.992
+    },
+    {
+      "event_id": 10,
+      "event": "A man is walking down a street with another person behind him.",
+      "start_s": 566.92,
+      "end_s": 579.15,
+      "score": 0.9997
+    },
+    {
+      "event_id": 11,
+      "event": "The camera pans to show an empty square concrete box sitting outside near some buildings.",
+      "start_s": 608.97,
+      "end_s": 626.12,
+      "score": 0.9996
+    },
+    {
+      "event_id": 12,
+      "event": "Inside someone walks through their living room holding something up high above them.",
+      "start_s": 411.94,
+      "end_s": 427.33,
+      "score": 0.9987
+    },
+    {
+      "event_id": 13,
+      "event": "Another individual stands inside looking at what was just held by that first person.",
+      "start_s": 411.28,
+      "end_s": 427.11,
+      "score": 0.9978
+    },
+    {
+      "event_id": 14,
+      "event": "Two people are standing together talking while seated indoors next to furniture like couches and chairs.",
+      "start_s": 438.23,
+      "end_s": 456.51,
+      "score": 0.9979
+    },
+    {
+      "event_id": 15,
+      "event": "One person sits alone facing away towards windows letting light stream in onto the floor.",
+      "start_s": 393.2,
+      "end_s": 410.22,
+      "score": 0.9984
+    },
+    {
+      "event_id": 16,
+      "event": "A man is holding a piece of paper while standing indoors with another person nearby.",
+      "start_s": 412.35,
+      "end_s": 427.22,
+      "score": 0.9985
+    },
+    {
+      "event_id": 17,
+      "event": "The same two people are now walking down an outdoor path surrounded by greenery.",
+      "start_s": 566.51,
+      "end_s": 579.85,
+      "score": 0.9996
+    },
+    {
+      "event_id": 18,
+      "event": "Two men stand near a building entrance as they walk away together.",
+      "start_s": 278.6,
+      "end_s": 306.75,
+      "score": 0.9992
+    },
+    {
+      "event_id": 19,
+      "event": "One individual walks alone along a sidewalk lined with trees.",
+      "start_s": 566.48,
+      "end_s": 578.89,
+      "score": 0.9992
+    },
+    {
+      "event_id": 20,
+      "event": "Another group stands outside at night talking to someone inside their vehicle.",
+      "start_s": 636.14,
+      "end_s": 647.51,
+      "score": 0.9994
+    },
+    {
+      "event_id": 21,
+      "event": "Three individuals sit around a table having drinks outdoors during evening hours.",
+      "start_s": 472.48,
+      "end_s": 487.53,
+      "score": 0.9752
+    },
+    {
+      "event_id": 22,
+      "event": "People gather for what appears to be a social gathering under artificial lighting.",
+      "start_s": 217.89,
+      "end_s": 245.55,
+      "score": 0.998
+    },
+    {
+      "event_id": 23,
+      "event": "Individuals enjoy food and drink at an indoor venue illuminated warmly.",
+      "start_s": 471.12,
+      "end_s": 486.04,
+      "score": 0.9711
+    },
+    {
+      "event_id": 24,
+      "event": "A woman sits next to others enjoying beverages at a party setting.",
+      "start_s": 471.77,
+      "end_s": 486.25,
+      "score": 0.9453
+    }
+  ],
+  "video_22": [
+    {
+      "event_id": 1,
+      "event": "A group of people are gathered around a brick wall with some standing closer to it than others.",
+      "start_s": 161.66,
+      "end_s": 182.04,
+      "score": 0.9996
+    },
+    {
+      "event_id": 2,
+      "event": "One person is jumping off the top step onto another set of steps below them while everyone else watches.",
+      "start_s": 0.0,
+      "end_s": 19.06,
+      "score": 0.9992
+    },
+    {
+      "event_id": 3,
+      "event": "The man who jumped has fallen down but quickly gets back up again after landing.",
+      "start_s": 219.0,
+      "end_s": 230.44,
+      "score": 0.9991
+    },
+    {
+      "event_id": 4,
+      "event": "Another individual runs towards him as he stands there looking at his feet.",
+      "start_s": 186.22,
+      "end_s": 218.02,
+      "score": 0.999
+    },
+    {
+      "event_id": 5,
+      "event": "Two men stand near an open door leading inside; they appear ready for something.",
+      "start_s": 203.28,
+      "end_s": 219.21,
+      "score": 0.9742
+    },
+    {
+      "event_id": 6,
+      "event": "People gather outside a building where two individuals walk by before stopping their conversation momentarily.",
+      "start_s": 161.96,
+      "end_s": 184.85,
+      "score": 0.9996
+    }
+  ],
+  "video_23": [
+    {
+      "event_id": 1,
+      "event": "A person is walking down a staircase with their hands behind them. They are wearing light blue jeans and carrying a backpack over their shoulder. The stairs have metal railings along both sides.",
+      "start_s": 144.22,
+      "end_s": 152.38,
+      "score": 0.9988
+    },
+    {
+      "event_id": 2,
+      "event": "Another individual walks up an elevator shaft towards another set of doors at ground level.",
+      "start_s": 179.5,
+      "end_s": 186.78,
+      "score": 0.9985
+    },
+    {
+      "event_id": 3,
+      "event": "An escalator moves upwards as someone stands near it waiting to use it.",
+      "start_s": 168.59,
+      "end_s": 175.08,
+      "score": 0.9974
+    },
+    {
+      "event_id": 4,
+      "event": "Two people stand together by some greenery outside; they appear engaged in conversation while looking around.",
+      "start_s": 147.4,
+      "end_s": 154.04,
+      "score": 0.9995
+    },
+    {
+      "event_id": 5,
+      "event": "Someone sits inside what appears to be a bus stop area next to parked cars under trees.",
+      "start_s": 41.11,
+      "end_s": 56.95,
+      "score": 0.9961
+    },
+    {
+      "event_id": 6,
+      "event": "People walk through a parking lot filled with various vehicles including trucks and vans.",
+      "start_s": 145.14,
+      "end_s": 152.2,
+      "score": 0.9989
+    }
+  ],
+  "video_24": [
+    {
+      "event_id": 1,
+      "event": "A shirtless man runs down a street with cars passing by him.",
+      "start_s": 45.12,
+      "end_s": 59.73,
+      "score": 0.9638
+    },
+    {
+      "event_id": 2,
+      "event": "The same person is now standing at an overpass looking out onto water below.",
+      "start_s": 132.82,
+      "end_s": 145.28,
+      "score": 0.9705
+    },
+    {
+      "event_id": 3,
+      "event": "He then jumps off to land safely beside it.",
+      "start_s": 129.56,
+      "end_s": 143.6,
+      "score": 0.9803
+    },
+    {
+      "event_id": 4,
+      "event": "Another individual joins them as they walk together along the bridge's edge.",
+      "start_s": 131.58,
+      "end_s": 145.35,
+      "score": 0.9389
+    },
+    {
+      "event_id": 5,
+      "event": "They continue walking past more people enjoying their day outdoors near buildings.",
+      "start_s": 42.34,
+      "end_s": 59.25,
+      "score": 0.9791
+    },
+    {
+      "event_id": 6,
+      "event": "Finally, he stops for a moment before continuing his journey across the river.",
+      "start_s": 131.6,
+      "end_s": 145.35,
+      "score": 0.9736
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "summary": {
+    "moment_detr": {},
+    "cg_detr": {}
+  },
+  "per_event": {
+    "moment_detr": {},
+    "cg_detr": {}
+  }
+}

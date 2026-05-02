@@ -1,0 +1,170 @@
+{
+  "video_21": {
+    "model": "moment_detr",
+    "num_clips": 5,
+    "output": "outputs/summaries/summary_video_21.mp4",
+    "events": [
+      {
+        "event_id": 16,
+        "event": "A man is holding a piece of paper while standing indoors with another person nearby.",
+        "start_s": 322.23,
+        "end_s": 348.78,
+        "score": 0.9983
+      },
+      {
+        "event_id": 24,
+        "event": "A woman sits next to others enjoying beverages at a party setting.",
+        "start_s": 322.62,
+        "end_s": 346.71,
+        "score": 0.9978
+      },
+      {
+        "event_id": 5,
+        "event": "An aerial view shows multiple residential structures surrounded by greenery.",
+        "start_s": 381.34,
+        "end_s": 408.6,
+        "score": 0.998
+      },
+      {
+        "event_id": 12,
+        "event": "Inside someone walks through their living room holding something up high above them.",
+        "start_s": 418.05,
+        "end_s": 449.39,
+        "score": 0.9983
+      },
+      {
+        "event_id": 20,
+        "event": "Another group stands outside at night talking to someone inside their vehicle.",
+        "start_s": 529.01,
+        "end_s": 566.33,
+        "score": 0.998
+      }
+    ]
+  },
+  "video_22": {
+    "model": "moment_detr",
+    "num_clips": 5,
+    "output": "outputs/summaries/summary_video_22.mp4",
+    "events": [
+      {
+        "event_id": 3,
+        "event": "The man who jumped has fallen down but quickly gets back up again after landing.",
+        "start_s": 0.0,
+        "end_s": 20.53,
+        "score": 0.9952
+      },
+      {
+        "event_id": 2,
+        "event": "One person is jumping off the top step onto another set of steps below them while everyone else watches.",
+        "start_s": 0.0,
+        "end_s": 19.03,
+        "score": 0.9935
+      },
+      {
+        "event_id": 6,
+        "event": "People gather outside a building where two individuals walk by before stopping their conversation momentarily.",
+        "start_s": 176.28,
+        "end_s": 225.93,
+        "score": 0.9902
+      },
+      {
+        "event_id": 1,
+        "event": "A group of people are gathered around a brick wall with some standing closer to it than others.",
+        "start_s": 198.85,
+        "end_s": 226.48,
+        "score": 0.9972
+      },
+      {
+        "event_id": 5,
+        "event": "Two men stand near an open door leading inside; they appear ready for something.",
+        "start_s": 200.97,
+        "end_s": 226.74,
+        "score": 0.9918
+      }
+    ]
+  },
+  "video_23": {
+    "model": "moment_detr",
+    "num_clips": 5,
+    "output": "outputs/summaries/summary_video_23.mp4",
+    "events": [
+      {
+        "event_id": 1,
+        "event": "A person is walking down a staircase with their hands behind them. They are wearing light blue jeans and carrying a backpack over their shoulder. The stairs have metal railings along both sides.",
+        "start_s": 57.02,
+        "end_s": 106.1,
+        "score": 0.9913
+      },
+      {
+        "event_id": 3,
+        "event": "An escalator moves upwards as someone stands near it waiting to use it.",
+        "start_s": 62.87,
+        "end_s": 114.14,
+        "score": 0.9938
+      },
+      {
+        "event_id": 6,
+        "event": "People walk through a parking lot filled with various vehicles including trucks and vans.",
+        "start_s": 66.84,
+        "end_s": 110.34,
+        "score": 0.9922
+      },
+      {
+        "event_id": 2,
+        "event": "Another individual walks up an elevator shaft towards another set of doors at ground level.",
+        "start_s": 69.48,
+        "end_s": 121.63,
+        "score": 0.993
+      },
+      {
+        "event_id": 5,
+        "event": "Someone sits inside what appears to be a bus stop area next to parked cars under trees.",
+        "start_s": 176.05,
+        "end_s": 187.0,
+        "score": 0.9969
+      }
+    ]
+  },
+  "video_24": {
+    "model": "moment_detr",
+    "num_clips": 5,
+    "output": "outputs/summaries/summary_video_24.mp4",
+    "events": [
+      {
+        "event_id": 1,
+        "event": "A shirtless man runs down a street with cars passing by him.",
+        "start_s": 63.92,
+        "end_s": 105.77,
+        "score": 0.9919
+      },
+      {
+        "event_id": 4,
+        "event": "Another individual joins them as they walk together along the bridge's edge.",
+        "start_s": 67.61,
+        "end_s": 94.89,
+        "score": 0.9892
+      },
+      {
+        "event_id": 6,
+        "event": "Finally, he stops for a moment before continuing his journey across the river.",
+        "start_s": 68.12,
+        "end_s": 105.88,
+        "score": 0.9872
+      },
+      {
+        "event_id": 2,
+        "event": "The same person is now standing at an overpass looking out onto water below.",
+        "start_s": 71.07,
+        "end_s": 96.58,
+        "score": 0.9944
+      },
+      {
+        "event_id": 5,
+        "event": "They continue walking past more people enjoying their day outdoors near buildings.",
+        "start_s": 116.27,
+        "end_s": 140.48,
+        "score": 0.9798
+      }
+    ]
+  }
+}

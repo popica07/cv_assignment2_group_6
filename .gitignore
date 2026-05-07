@@ -1,1 +1,7 @@
-moment_retreival_conclusions_for now
+*.json
+*.mp4
+*.txt
+*.pt
+*.ckpt
+*.exe
+*.pkl
